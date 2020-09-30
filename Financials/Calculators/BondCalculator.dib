@@ -1,0 +1,112 @@
+#!markdown
+
+Inputs
+
+#!markdown
+
+The formula for NPV
+
+NPV = Cash Flow / (1+i)t - initial investment
+
+where 
+    i = required return or discount rate
+    t = number of time periods
+
+#!csharp
+
+var CouponRate =3.5;
+var bidPrice = 101.814;
+var askPrice = 101.844;
+var midPrice = (bidPrice+askPrice)/2;
+var bidYield = 3.776;
+var askYield = 3.772;
+var midYield = (bidYield+askYield)/2;
+var paymentFrequency = 2;
+var startDate = new DateTime(2008,8,15);
+var settlementDate = new DateTime(2020, 09, 22);
+var firstCouponDate = new DateTime(2009,02,15);
+var maturityDate = new DateTime(2018,08,15);
+
+var redemption =100;
+var noCoupons = 20;
+var daysToFirstPayment = firstCouponDate - settlementDate;
+var daysInFirstCoupon = firstCouponDate - startDate;
+
+#!csharp
+
+display(CouponRate);
+
+#!markdown
+
+NPV Calc
+var coupons = 1..20
+var redemptionRate = Redemption*CouponRate/200  <= what is the 200? 
+var 1stDiscounted = 1/(1+(Yield/(Freq*100)))^(DaysToFirstCoupon/FirstCouponDays)
+var discounted =    H3/(1+(Yield/(Freq*100)))
+
+#!csharp
+
+var coupons = Enumerable.Range(1,20);
+
+public class NPV
+{
+    public int Coupon {get;set;}
+    public double RedemptionRate {get;set;}    
+    public double Npv {get;set;}
+    public double Price {get;set;}
+
+    public double NpvBP {get;set;}
+    public double PriceBP {get;set;}
+}
+
+Func<double> redemptionRate =() => redemption*CouponRate/200; 
+Func<double, double, int, double> discount = 
+    (double priorNPV, double yield, int freq) => priorNPV/(1+(yield/(freq*100))); 
+Func<double, int, double> firstDiscount = 
+    (double yield, int freq) 
+        => Math.Pow(discount(1.0f, yield, freq), (daysToFirstPayment/daysInFirstCoupon)); 
+Func<double, double, int, double> discountBP = 
+    (double priorNPV, double yield, int freq) => priorNPV/(1+((yield+0.01)/(freq*100))); 
+Func<double, int, double> firstDiscountBP = 
+    (double yield, int freq) 
+        => Math.Pow(discount(1.0f, yield+0.01, freq), (daysToFirstPayment/daysInFirstCoupon)); 
+
+var npvCalc = new List<NPV>();
+var prevNPV =1.0;
+var prevNPVBP =1.0;
+foreach(var coupon in coupons)
+{
+    var npv = new NPV() 
+    { 
+        Coupon =coupon,
+        
+        RedemptionRate = (coupon==noCoupons) ? redemption + redemptionRate() : redemptionRate(),
+        Npv = (coupon ==1) ? 
+            firstDiscount(midYield, paymentFrequency)
+            : discount(prevNPV, midYield, paymentFrequency),
+
+        NpvBP = (coupon ==1) ? 
+            firstDiscountBP(midYield, paymentFrequency)
+            : discountBP(prevNPV, midYield, paymentFrequency)
+    };
+
+    prevNPV = npv.Npv;
+    prevNPVBP = npv.NpvBP;
+    npv.Price = npv.RedemptionRate * npv.Npv;
+    npv.PriceBP = npv.RedemptionRate * npv.NpvBP;
+    //Console.WriteLine($"{npv.Coupon} {npv.Coupon} {npv.RedemptionRate} {npv}");
+    npvCalc.Add(npv);
+}
+
+Console.WriteLine($"{npvCalc.Count()}");
+var dirtyPrice = npvCalc.Sum(x=>x.Price);
+var dirtyPriceBP = npvCalc.Sum(x=>x.PriceBP);
+
+display(npvCalc);
+
+
+var accruedInterest = redemption*(CouponRate/(paymentFrequency*100))*((daysInFirstCoupon-daysToFirstPayment)/daysInFirstCoupon);
+display($"Dirty Price:{dirtyPrice}, Accrued Interest:{accruedInterest} Clean Price: {dirtyPrice-accruedInterest}");
+
+//var accruedInterestBP = redemption*(CouponRate/(paymentFrequency*100))*((daysInFirstCoupon-daysToFirstPayment)/daysInFirstCoupon);
+//yahoo.co.ukdisplay($"Dirty Price:{dirtyPriceBP}, Accrued Interest:{accruedInterestBP} Clean Price: {dirtyPriceBP-accruedInterestBP}");

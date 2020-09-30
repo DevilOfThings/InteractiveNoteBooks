@@ -1,0 +1,107 @@
+#!csharp
+
+public static void Display<T>(this Queue<T> Q)
+    {
+        var sb = new StringBuilder();
+        sb.AppendJoin(",", Q.ToArray());
+        
+        Console.WriteLine($"{sb.ToString()}");
+    }
+    
+    public static void Display<T>(this Stack<T> S)
+    {
+        var sb = new StringBuilder();
+        sb.AppendJoin(",", S.ToArray());
+        
+        Console.WriteLine($"{sb.ToString()}");
+    }
+
+#!markdown
+
+My pathet5ic attempt!
+
+#!csharp
+
+public class Solution {
+    public static int Clumsy(int N) {
+                         
+        var op = new char[] {'*','/','+','-'};
+        
+        var queue = new Queue<int>();
+        var result = new Queue<int>();
+            
+        Action<int, int> clumsy = (int r, int opIdx)  =>
+        {
+
+            switch(opIdx)
+            {
+                case 0:
+                    queue.Enqueue(queue.Dequeue()*r);                    
+                    break;
+                case 1:
+                    result.Enqueue(queue.Dequeue()/r);
+                    break;
+                case 2:               
+                    result.Enqueue(r);
+                    break;                
+                default:
+                    break;
+            }
+        };
+        
+        var opIdx =0;
+        for(var r =N; r > 0; --r)
+        {
+            if(opIdx==0)
+            {
+                queue.Enqueue(r);
+                --r;
+            }
+            clumsy(r, opIdx);
+            opIdx = (opIdx==2) ? 0 : ++opIdx;
+        }
+
+        result.Display();
+        int real = result.Dequeue();
+        int idx=0;
+        while(result.Count > 0)
+        {
+            real += (idx%2==0) ? -result.Dequeue() : result.Dequeue();
+            ++idx;
+        }
+
+
+
+        return real;
+    }
+}
+
+Console.WriteLine($"{Solution.Clumsy(8)} {12}");
+Console.WriteLine($"{Solution.Clumsy(4)} {7}");
+
+#!markdown
+
+But this is
+
+#!csharp
+
+public class Solution 
+{
+    public int Clumsy(int N) 
+    {
+        var stack = new Stack<int>();
+        var op = new char[]{ '*', '/', '+', '-' };
+        stack.Push(N--);
+        int index = 0;
+        while (N > 0) 
+        {
+            if (op[index] == '*') stack.Push(stack.Pop() * N--);
+            else if (op[index] == '/') stack.Push(stack.Pop() / N--);
+            else if (op[index] == '+') stack.Push(N--);
+            else if (op[index] == '-') stack.Push(-1 * (N--));
+            index = index == op.Length - 1 ? 0 : index + 1;
+        }
+        
+        return stack.Sum();
+    }
+}

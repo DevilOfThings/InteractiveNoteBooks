@@ -1,0 +1,49 @@
+#!markdown
+
+Valid Tree
+    5
+    /\
+4       7
+
+Invalid Tree
+    5
+    /\
+7       4
+Invbalid Tree
+    5
+    /\
+4       7
+        /
+        2
+
+
+Maintains that the property on the left are lower than those on the right
+
+#!markdown
+
+Create a Node class
+
+#!csharp
+
+using System;
+
+public void MatrixSearchSequel()
+{
+    int[,] matrix = new int[1,3] {{1,2,3}};
+
+    bool result = false;
+
+    var target = 7;
+    for(var row = 0; row<matrix.GetLength(0); ++row)
+    {
+        for(var col = 0; col<matrix.GetLength(1); ++ col)
+        {
+            if(matrix[row,col] == target)
+            {
+                result = true;
+            }
+        }
+    }
+
+    Console.WriteLine($"Result: {result}");
+}

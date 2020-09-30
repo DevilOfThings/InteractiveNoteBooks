@@ -1,0 +1,13 @@
+#!csharp
+
+public class Extensions
+{
+    public static bool IsTrue(int expected, int actual)
+    {
+        return expected ==actual;
+    }
+}
+
+#!markdown
+
+Many ways of declaring a new array

@@ -1,0 +1,41 @@
+#!markdown
+
+Ransom Note, check the ability to spell a ransom not from random letters
+
+#!csharp
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+public static bool CanSpell(this List<char> magazine, string word)
+{
+    bool result = true;
+
+    foreach(var letter in word)
+    {
+        var found = magazine.IndexOf(letter);
+        if(found !=-1)
+        {
+            magazine.RemoveAt(found);
+            continue;
+        }
+
+        result = false;
+        break;
+    }
+
+    return result;
+}
+
+string word = "BED";
+string letters = "ABCDEF";
+var magazine = letters.ToCharArray().ToList();
+if(magazine.CanSpell(word))
+{
+    Console.WriteLine($"Can spell {word} from {letters}");
+}
+else
+{
+    Console.WriteLine($"Cannot spell {word} from {letters}");
+}

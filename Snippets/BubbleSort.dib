@@ -1,0 +1,35 @@
+#!csharp
+
+public class Solution
+{
+    public static void Swap(ref int l, ref int r)
+    {
+        var temp = l;
+        l = r;
+        r = temp;
+    }
+
+    public static int[] BubbleSort(int[] arr)
+    {
+        for(var i=0;i<arr.Length-1;++i)
+        {
+            for(var j=0;j < arr.Length-i-1;++j)
+            {
+                if(arr[j] > arr[j+1])
+                    Swap(ref arr[j], ref arr[j+1]);
+            }
+        }
+        return arr;
+    }
+}
+
+var arr = new int[]{90,76,45,93,68,13,98};
+var sb = new StringBuilder();
+sb.AppendJoin(",", arr);
+Console.WriteLine($"{sb}");
+
+arr = Solution.BubbleSort(arr);
+
+sb.Clear();
+sb.AppendJoin(",", arr);
+Console.WriteLine($"{sb}");

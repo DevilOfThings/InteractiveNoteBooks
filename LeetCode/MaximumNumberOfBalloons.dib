@@ -1,0 +1,105 @@
+#!markdown
+
+1189. Maximum Number of Balloons
+
+Given a string text, you want to use the characters of text to form as many instances of the word "balloon" as possible.
+
+You can use each character in text at most once. Return the maximum number of instances that can be formed.
+
+ 
+
+Example 1:
+
+
+
+Input: text = "nlaebolko"
+Output: 1
+Example 2:
+
+
+
+Input: text = "loonbalxballpoon"
+Output: 2
+Example 3:
+
+Input: text = "leetcode"
+Output: 0
+
+#!csharp
+
+public class Solution {
+    public static int MaxNumberOfBalloons(string text) {
+        
+        var lookup = new Dictionary<char, int>();
+
+        foreach(var letter in text)
+        {
+            if(lookup.ContainsKey(letter))
+            {
+                lookup[letter] ++;
+            }
+            else
+            {
+                lookup.Add(letter, 1);
+            }
+        }
+
+        var balloonCount =text.Length;
+        var balloon = "balon";
+        
+        foreach(var letter in balloon)
+        {            
+            var count = lookup.Where(x=>x.Key == letter).Select(x=>x.Value).FirstOrDefault();
+            balloonCount = (letter =='l' || letter =='o') ? Math.Min(balloonCount, count/2) : Math.Min(balloonCount, count);
+            
+        }
+
+        return balloonCount;
+    }
+
+    
+}
+
+Console.WriteLine($"{Solution.MaxNumberOfBalloons("nlaebolko")} {1}");
+Console.WriteLine($"{Solution.MaxNumberOfBalloons("loonbalxballpoon")} {2}");
+Console.WriteLine($"{Solution.MaxNumberOfBalloons("leetcode")} {0}");
+
+#!csharp
+
+public class Solution {
+    public static int MaxNumberOfBalloons(string text) {
+        
+        var lookup = new Dictionary<char, int>()
+        {
+            {'b', 0},
+            {'a', 0},
+            {'l', 0},
+            {'o', 0},
+            {'n', 0},
+        };
+
+        foreach(var letter in text)
+        {
+            if(lookup.ContainsKey(letter))
+            {
+                lookup[letter] ++;
+            }            
+        }
+
+        var balloonCount =text.Length;
+        
+        foreach(var letter in lookup)
+        {            
+            balloonCount = (letter.Key =='l' || letter.Key =='o') ? 
+                Math.Min(balloonCount, letter.Value/2) : Math.Min(balloonCount, letter.Value);
+        }
+
+        return balloonCount;
+    }
+
+    
+}
+
+Console.WriteLine($"{Solution.MaxNumberOfBalloons("nlaebolko")} {1}");
+Console.WriteLine($"{Solution.MaxNumberOfBalloons("loonbalxballpoon")} {2}");
+Console.WriteLine($"{Solution.MaxNumberOfBalloons("leetcode")} {0}");

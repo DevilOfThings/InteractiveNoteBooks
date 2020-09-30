@@ -1,0 +1,128 @@
+#!markdown
+
+Different ways of declaring single dimension array
+
+#!csharp
+
+{
+    var array = new int[6] {1,2,3,4,5,6};
+    
+    var sb = new StringBuilder();
+    sb.AppendJoin(",", array);    
+    Console.WriteLine($"{sb.ToString()} Length:{array.Length}");
+}
+{
+    int[] array = new int[] {1,2,3,4,5,6};
+
+    var sb = new StringBuilder();
+    sb.AppendJoin(",", array);    
+    Console.WriteLine($"{sb.ToString()} Length:{array.Length}");
+}
+{
+    int[] array = new [] {1,2,3,4,5};
+
+    var sb = new StringBuilder();
+    sb.AppendJoin(",", array);    
+    Console.WriteLine($"{sb.ToString()} Length:{array.Length}");
+}
+{
+    int[] array = new int[5] {1,2,3,4,5};
+
+    var sb = new StringBuilder();
+    sb.AppendJoin(",", array);    
+    Console.WriteLine($"{sb.ToString()} Length:{array.Length}");
+}
+
+#!markdown
+
+Different ways of declaring multi-dimension array
+
+#!csharp
+
+{ // 2 dim array
+    int [,] array = new int[2,5] { {1,2,3,4,5}, {5,4,3,2,1} };
+
+    var sb = new StringBuilder();
+    sb.Append(" Lower(0) " + array.GetLowerBound(0));
+    sb.Append(" Upper(0) " + array.GetUpperBound(0));
+    sb.Append(" Lower(1) " + array.GetLowerBound(1));
+    sb.Append(" Upper(1) " + array.GetUpperBound(1));
+    sb.Append(" Dimensions " + array.Rank);
+
+    foreach(var i in array)
+    {
+    //sb.Append(i);
+    }
+    
+    sb.AppendJoin(",", array);
+    Console.WriteLine($"{sb.ToString()} Length:{array.Length}");
+}
+{ // 3 dim array
+    int[,,] array = new int[1,2,3] 
+    { 
+        {{1,2,3},{1,2,3}},        
+    };
+    Console.WriteLine($"Elements: {array.Length}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(0)} {array.GetUpperBound(0)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(1)} {array.GetUpperBound(1)}");
+    Console.WriteLine($"# of dimensions {array.Rank}");
+}
+
+#!markdown
+
+Jagged arrays require new'ing the elements but allow greater flexibilty with accessing the rows, and different row sizes can be added
+
+#!markdown
+
+{
+    int[][] array = new int[1][];
+}
+{
+    int[][] array = new int[2][] { 
+        new int[] {1,1},
+        new int[] {1,2,3,4}
+     };
+}
+
+#!markdown
+
+Declaring an array with Array.CreatInstance when the type isnt know at compile time
+Array.CreatInstance isn't required so much now generics are available
+
+#!csharp
+
+{
+    var array = Array.CreateInstance(typeof(int), 10);
+    Console.WriteLine($"Elements: {array.Length}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(0)} {array.GetUpperBound(0)}");    
+    Console.WriteLine($"# of dimensions {array.Rank}");
+
+    var sb = new StringBuilder("hello");
+    sb.AppendJoin(",", array);
+
+    Console.WriteLine($"{sb.ToString()}");
+}
+{
+    var array = Array.CreateInstance(typeof(int), 10,2);
+    Console.WriteLine($"Elements: {array.Length}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(0)} {array.GetUpperBound(0)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(1)} {array.GetUpperBound(1)}");
+    Console.WriteLine($"# of dimensions {array.Rank}");
+}
+{
+    var array = Array.CreateInstance(typeof(int), 10,20,3);
+    Console.WriteLine($"Elements: {array.Length}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(0)} {array.GetUpperBound(0)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(1)} {array.GetUpperBound(1)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(2)} {array.GetUpperBound(2)}");
+    Console.WriteLine($"# of dimensions {array.Rank}");
+}
+{
+    var array = Array.CreateInstance(typeof(int), new int[]{10,20,30,4});
+    Console.WriteLine($"Elements: {array.Length}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(0)} {array.GetUpperBound(0)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(1)} {array.GetUpperBound(1)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(2)} {array.GetUpperBound(2)}");
+    Console.WriteLine($"Bounds: {array.GetLowerBound(3)} {array.GetUpperBound(3)}");
+    Console.WriteLine($"# of dimensions {array.Rank}");
+}

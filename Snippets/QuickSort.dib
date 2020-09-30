@@ -1,0 +1,108 @@
+#!csharp
+
+public static void Swap(ref int left, ref int right)
+{
+    var temp = left;
+    left = right;
+    right = temp;
+}
+
+var sb = new StringBuilder();
+var arr = new int[]{3,5,6,7,8};
+sb.AppendJoin(",", arr);
+Console.WriteLine($"{sb.ToString()}");
+
+Swap(ref arr[2], ref arr[3]);
+
+sb.Clear();
+sb.AppendJoin(",", arr);
+Console.WriteLine($"{sb.ToString()}");
+
+#!csharp
+
+public class Solution
+{
+    public static int Partition(int[] arr, int left, int right)
+    {
+        var pivot = arr[left];
+        while(true)
+        {
+            while(arr[left] < pivot) ++left;
+            while(arr[right] > pivot) --right;
+
+            if(left < right)
+            {
+                if(arr[left] == arr[right])
+                    return right;
+
+                    Swap(ref arr[left], ref arr[right]);
+            }
+            else {
+                return right;
+            }
+        }        
+    }
+
+    public static void Swap(ref int left, ref int right)
+    {
+        var temp = left;
+        left = right;
+        right = temp;
+    }
+}
+
+Console.WriteLine($"{Solution.Partition(new int[]{2,5,-4,11,0,18,22,67,51,6}, 0, 9)}");
+
+#!csharp
+
+public partial class Solution
+{
+
+    public static int[] QuickSort(int[] arr, int left, int right)
+    {
+        if(left < right)
+        {
+            var pivot = Partition(arr, left,right);
+
+            if(pivot > 1)
+                QuickSort(arr, left, pivot-1);
+            if(pivot+1 < right)
+                QuickSort(arr,pivot+1,right);
+        }
+
+        return arr;
+    }
+    
+    public static int Partition(int[] arr, int left, int right)
+    {
+        var pivot = arr[left];
+        while(true)
+        {
+            while(arr[left] < pivot) ++left;
+            while(arr[right] > pivot) --right;
+
+            if(left < right)
+            {
+                if(arr[left] == arr[right])
+                    return right;
+
+                    Swap(ref arr[left], ref arr[right]);
+            }
+            else {
+                return right;
+            }
+        }        
+    }
+
+    public static void Swap(ref int left, ref int right)
+    {
+        var temp = left;
+        left = right;
+        right = temp;
+    }
+
+}
+
+var sb = new StringBuilder();
+sb.AppendJoin(", ", Solution.QuickSort(new int[]{2,5,-4,11,0,18,22,67,51,6}, 0, 9));
+Console.WriteLine($"{sb.ToString()}");

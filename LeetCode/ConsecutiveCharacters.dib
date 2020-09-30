@@ -1,0 +1,97 @@
+#!markdown
+
+1446. Consecutive Characters (Easy)
+Given a string s, the power of the string is the maximum length of a non-empty substring that contains only one unique character.
+
+Return the power of the string.
+
+#!markdown
+
+Example 1:
+
+Input: s = "leetcode"
+Output: 2
+Explanation: The substring "ee" is of length 2 with the character 'e' only.
+
+#!markdown
+
+Example 2:
+
+Input: s = "abbcccddddeeeeedcba"
+Output: 5
+Explanation: The substring "eeeee" is of length 5 with the character 'e' only.
+
+#!markdown
+
+Example 3:
+
+Input: s = "triplepillooooow"
+Output: 5
+Example 4:
+
+Input: s = "hooraaaaaaaaaaay"
+Output: 11
+Example 5:
+
+Input: s = "tourist"
+Output: 1
+
+#!csharp
+
+public class Solution {
+    public static int MaxPower(string s) {
+        
+        if(string.IsNullOrEmpty(s))
+            return 0;
+
+        var lookup = new Dictionary<char,int>() { };
+        int current = 1;
+
+        Action<int> addPower = (int idx) =>       
+        {
+            if(lookup.ContainsKey(s[idx]))
+            {
+                if(lookup[s[idx]] < current)
+                {
+                    lookup[s[idx]] = current;
+                }
+            }
+            else
+            {
+                lookup.Add(s[idx], current);
+            }
+        };
+ 
+        int idx1 = 0;
+        int idx2 = 1;
+
+        while(idx2 < s.Length)
+        {            
+            if(s[idx1] == s[idx2])
+            {
+                current++;
+            }
+            else
+            {
+                addPower(idx1);
+                current =1;
+            }
+
+            ++idx1;
+            ++idx2;
+        }
+
+        addPower(s.Length-1);
+        
+
+        return lookup.Values.Max();
+    }
+}
+
+Console.WriteLine($"{Solution.MaxPower("leetcode")} {2}");
+Console.WriteLine($"{Solution.MaxPower("abbcccddddeeeeedcba")} {5}");
+Console.WriteLine($"{Solution.MaxPower("triplepillooooow")} {5}");
+Console.WriteLine($"{Solution.MaxPower("hooraaaaaaaaaaay")} {11}");
+Console.WriteLine($"{Solution.MaxPower("tourist")} {1}");
+Console.WriteLine($"{Solution.MaxPower("ccbccbb")} {2}");
+Console.WriteLine($"{Solution.MaxPower("")} {0}");

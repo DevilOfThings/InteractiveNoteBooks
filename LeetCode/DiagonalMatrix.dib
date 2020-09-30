@@ -1,0 +1,94 @@
+#!markdown
+
+Take a matrix and work out the diagonal matrix starting with the bottom left
+
+#!csharp
+
+public class Diagonals
+    {
+        public static IList<IList<Tuple<int,int>>> Diagonal(int[][] mtx) {
+
+            var result = new List<IList<Tuple<int,int>>>();
+
+            int rN =mtx.Length-1;
+            int r =rN;
+            int c=0;
+            int roc =0;
+            
+            while(rN>=0)
+            {
+                var diagonal = new List<Tuple<int,int>>();
+                while(r>=0 && c>=0)
+                {
+                    diagonal.Add(new Tuple<int,int>(r,c));
+                    --r;
+                    --c;
+                }
+                c = ++roc;
+                if(roc>mtx[0].Length-1)
+                {
+                    c = mtx[0].Length-1;
+                    --rN;
+                }
+                    
+                r = rN;
+
+                result.Add(diagonal);
+            }
+
+            return result;
+        }
+    }
+
+
+var mtx = new int[][]
+{
+    new int[] {3,3,1,1},
+    new int[] {2,2,1,2},
+    new int[] {1,1,1,2}
+
+};
+var expected = new Tuple<int,int>[][] {
+        new Tuple<int,int>[]
+        {
+            new Tuple<int,int>(2,0),
+        },
+        new Tuple<int,int>[]
+        {
+            new Tuple<int,int>(1,0),
+            new Tuple<int,int>(2,1)
+        },
+        new Tuple<int,int>[]
+        {
+            new Tuple<int,int>(0,0),
+            new Tuple<int,int>(1,1),
+            new Tuple<int,int>(2,2)
+        },
+        new Tuple<int,int>[]
+        {
+            new Tuple<int,int>(0,1),
+            new Tuple<int,int>(1,2),
+            new Tuple<int,int>(2,3)
+        },
+        new Tuple<int,int>[]
+        {
+            new Tuple<int,int>(0,2),
+            new Tuple<int,int>(1,3)
+        },
+        new Tuple<int,int>[]
+        {
+            new Tuple<int,int>(0,3),
+        }
+        
+};
+            
+
+var diagonals = Diagonals.Diagonal(mtx);
+var sb = new StringBuilder();
+
+foreach(var diagonal in diagonals)
+{    
+    sb.AppendJoin(",", diagonal);
+    Console.WriteLine($"{sb}");
+    sb.Clear();
+}

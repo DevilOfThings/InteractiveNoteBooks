@@ -1,0 +1,280 @@
+#!csharp
+
+Console.WriteLine("Started!");
+
+#!csharp
+
+public class AvailableSpace
+{
+    public int Horizontal;
+    public int Vertical;
+    
+
+    public override string ToString()
+    {
+        return $"({Horizontal},{Vertical})";
+    }
+}
+
+public class Cell
+{
+    public string Name;
+    public AvailableSpace AvailableSpace;
+    public int Row;
+    public int Column;
+
+    public override string ToString()
+    {
+    return $"{AvailableSpace}";
+    }
+}
+
+    public class Vessel
+    {
+        public int Size;
+        public List<Cell> Placement = new List<Cell>();
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            foreach(var item in Placement)
+            {
+                sb.Append($" {item.Name} ");
+                sb.Append($"({item.Row+1}, {item.Column+1}) ");
+                sb.Append($"Space {item.AvailableSpace} ");
+                sb.AppendLine();
+            }
+            return $"Size: {Size} \r\n{sb}";
+        }
+    }
+
+
+    public class Board
+    {
+        private Cell[][] board;
+
+        public Board()
+        {
+            //board = Array.CreateInstance(typeof(Cell), 10, 10) as Cell[][];
+        board = new Cell[10][];
+
+        int maxCol = 9;
+        int maxRow = 9;
+        
+        var letters = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+        for(var c = 0; c < 10; ++c)
+        {            
+            board[c] = new Cell[10];
+            for(var r =0; r < 10; ++r)
+            {
+                var cell = new Cell()
+                {
+                    Name = $"{letters[r]}{c+1}", 
+                    Row = r,
+                    Column = c,
+                    AvailableSpace = new AvailableSpace() 
+                    {
+                        Horizontal = maxCol - c,
+                        Vertical = maxRow - r,
+                        
+                    }
+                };
+                
+                board[c][r] = cell;
+            }
+        }
+        }
+
+        public Vessel[] Vessel;
+        
+
+        
+
+        public void PrintBoard()
+        {
+            var sb = new StringBuilder("\t");            
+            sb.AppendJoin("\t", Enumerable.Range(1,10));
+            Console.WriteLine(sb);
+            sb.Clear();
+
+            var letters = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+
+            for(var r = 0; r < 10; ++r)
+            {
+                for(var c =0; c < 10; ++c)
+                {
+                    var cell = board[c][r];
+                    if(c ==0)
+                        sb.Append($"{letters[r]}\t{cell}");
+                    else
+                        sb.Append($"\t{cell}");
+                        
+                }
+                Console.WriteLine(sb);
+                sb.Clear();
+            }
+        }
+
+        public Cell[] FindVerticalGap(int c, int r, int size)
+        {
+            var occupies = new Cell[size];
+            var startPos = board[c][r];
+            bool tooSmall =startPos.AvailableSpace.Horizontal < size;
+
+            if(!tooSmall)
+            {
+                var vesselSize = Enumerable.Range(r,r+size);
+                
+                for(var i =0; i < size; ++i)
+                {
+                    if(board[c][r+i].AvailableSpace.Vertical > size-i)
+                    {
+                        occupies[i] = (board[c][r+i]);
+                    }
+                    else {
+                        tooSmall = true;
+                        break;
+                    }
+                }
+            }
+            return (!tooSmall ? occupies : new Cell[0]);
+        }
+        public Cell[] FindHorizontalGap(int c, int r, int size)
+        {
+            var occupies = new Cell[size];
+            var startPos = board[c][r];
+            bool tooSmall =startPos.AvailableSpace.Vertical < size;
+
+            if(!tooSmall)
+            {
+                var vesselSize = Enumerable.Range(c,c+size);
+                
+                for(var i =0; i < size; ++i)
+                {
+                    if(board[c+i][r].AvailableSpace.Horizontal > size-i)
+                    {
+                        occupies[i] = (board[c+i][r]);
+                    }
+                    else {
+                        tooSmall = true;
+                        break;
+                    }
+                    
+                }
+            }
+            
+            return (!tooSmall ? occupies : new Cell[0]);
+        }
+
+        public IList<Cell[]> FindPossibleGap(int size)
+        {
+            var result = new List<Cell[]>();
+            
+            
+
+            for(var c =0; c < 10; ++c)
+            {
+                for(var r = 0; r < 10; ++r)
+                {
+                    result.Add(FindHorizontalGap(c,r,size));
+                    result.Add(FindVerticalGap(c,r,size));
+                }
+            }
+
+            return result;
+        }
+
+        public Cell[] FindPlacement(int size)
+        {
+
+            Cell[] placement;
+
+            do {
+                var r = new Random();
+                var x = r.Next(0,10);
+                var y = r.Next(0,10);
+                var direction = y % 2;
+
+                placement = (direction ==0) ? FindVerticalGap(x,y, size) : FindHorizontalGap(x,y, size);
+
+            } while(placement.Count() ==0);
+            
+            return placement;
+        }
+
+        public void UpdateHorizontalAvailability(Cell[] cells)
+        {
+            for(var c = 0; c < cells[cells.Length-1].Column+1; ++c)
+            {
+                for(var r =cells[0].Row; r < cells[cells.Length-1].Row+1; ++r)
+                {
+                    if(board[c][r].AvailableSpace.Horizontal >cells[0].Column - c)
+                        board[c][r].AvailableSpace.Horizontal =Math.Max(0,cells[0].Column - c);
+                }
+            }
+        }
+
+        public void UpdateVerticalAvailability(Cell[] cells)
+        {
+            for(var c = cells[0].Column; c < cells[cells.Length-1].Column+1; ++c)
+            {
+                for(var r =0; r < cells[cells.Length-1].Row+1; ++r)
+                {
+                    if(board[c][r].AvailableSpace.Vertical >cells[0].Row - r)
+                        board[c][r].AvailableSpace.Vertical = Math.Max(0, cells[0].Row - r);
+                }
+            }
+        }
+        
+
+        public void GetColumn()
+        {
+        }
+
+        public void GetRow()
+        {
+            
+        }
+
+        public void PositionVessel(Vessel vessel)
+        {
+            var placement = FindPlacement(vessel.Size);
+            vessel.Placement.AddRange(placement);
+            UpdateVerticalAvailability(placement);
+            UpdateHorizontalAvailability(placement);
+        }
+    }
+
+    
+    var b = new Board();
+    //var gaps = b.FindPlacement(size);
+    var vessel = new Vessel[]
+    {
+        new Vessel(),
+        new Vessel(),
+        new Vessel(),
+        new Vessel(),
+        new Vessel()
+    };
+    vessel[0].Size = 5;
+    vessel[1].Size = 4;
+    vessel[2].Size = 3;
+    vessel[3].Size = 3;
+    vessel[4].Size = 2;
+
+    b.PositionVessel(vessel[0]);
+    b.PositionVessel(vessel[1]);
+    b.PositionVessel(vessel[2]);
+    b.PositionVessel(vessel[3]);
+    b.PositionVessel(vessel[4]);
+
+    Console.WriteLine($"{vessel[0]}");
+    Console.WriteLine($"{vessel[1]}");
+    Console.WriteLine($"{vessel[2]}");
+    Console.WriteLine($"{vessel[3]}");
+    Console.WriteLine($"{vessel[4]}");
+
+    b.PrintBoard();
+
+    
+    Console.WriteLine("The End!");

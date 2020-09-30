@@ -1,0 +1,107 @@
+#!markdown
+
+1329. Sort the Matrix Diagonally
+
+
+Given a m * n matrix mat of integers, sort it diagonally in ascending order from the top-left to the bottom-right then return the sorted array.
+
+Input: mat = [[3,3,1,1],[2,2,1,2],[1,1,1,2]]
+Output: [[1,1,1,1],[1,2,2,2],[1,2,3,3]]
+ 
+
+Constraints:
+
+m == mat.length
+n == mat[i].length
+1 <= m, n <= 100
+1 <= mat[i][j] <= 100
+
+#!csharp
+
+public class Solution {
+
+    public void Swap(ref int l, ref int r)
+    {
+            int temp =l;
+            l = r;
+            r = temp;
+    }
+
+    
+
+    public static IList<Tuple<int,int>> DiagonalSort(int[][] mat) {
+
+        
+
+        var list = new List<Tuple<int,int>>();
+
+        int x = 0;
+        int y=0;
+        int roc =0;
+        //for(var x = 0; x < mat[0].Length;)
+        while(x<mat[0].Length && y<mat.Length)
+        {
+            list.Add(new Tuple<int,int>(x,y));
+            
+            if(roc%2==0)
+            {
+                ++x;
+                if(x==mat[0].Length)
+                {
+                    x =roc;
+                }
+            }
+            else
+            {
+                ++y;
+                if(y==mat.Length)
+                {
+                    roc++;
+                    y=roc;
+                }
+            }
+            list.Add(new Tuple<int,int>(x,y));
+        }
+
+
+        return list;
+    }
+}
+
+var mat = new int[][] {
+    new int[] {3,3,1,1},
+    new int[] {2,2,1,2},
+    new int[] {1,1,1,2}
+};
+
+var sb = new StringBuilder();
+foreach(var item in Solution.DiagonalSort(mat))
+{
+    sb.Append($",({item})");
+}
+
+Console.WriteLine($"{sb.ToString()}");
+
+#!csharp
+
+// Scratch
+
+var mat = new int[][]
+{
+    new int[]{3,3,1,1},
+    new int[]{2,2,1,2,5},
+    new int[]{1,1,1,2,6,7}
+};
+
+int[] array1 = new int[10];
+int[,] array2= new int[10,3];
+int[][] array3 = new int[10][];
+
+Console.WriteLine("{0}: {1} dimension(s)",
+array1.ToString(), array1.Rank);
+Console.WriteLine("{0}: {1} dimension(s)",
+array2.ToString(), array2.Rank);
+Console.WriteLine("{0}: {1} dimension(s)",
+array3.ToString(), array3.Rank);
+
+Console.WriteLine($"{Solution.DiagonalSort(mat)}");
